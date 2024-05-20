@@ -45,7 +45,5 @@ args = parser.parse_args()
 
 if args.list_ifaces:
     showlistinterfaces()
-elif args.ifaces is not None:
-    print(checkpublicip(args.ifaces, args.timeout).strip(), end="")
 else:
-    parser.error("You must specify the `--ifaces` option")
+    print(checkpublicip(args.ifaces, args.timeout).strip(), end="")
