@@ -5,8 +5,8 @@ PROG=/usr/local/bin/check-public-ip
 
 sudo mkdir -p $LIB_DIR
 
-sudo cp requirements.txt $LIB_DIR/requirements.txt
-sudo cp -r src $LIB_DIR/src
+sudo cp -rf requirements.txt $LIB_DIR/requirements.txt
+sudo cp -rf src $LIB_DIR/
 sudo -H pip3 install -r $LIB_DIR/requirements.txt
 
 if [ -f $PROG ]; then
