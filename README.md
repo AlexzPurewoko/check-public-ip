@@ -42,6 +42,7 @@ pycurl.error: (77, 'error setting certificate verify locations:\n  CAfile: /etc/
 
 It's because the `pycurl` cannot find your certificates for sending requests. To fix this, you can simply run : 
 ```
+sudo mkdir -p /etc/pki/tls/certs
 sudo cp /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt
 ```
 Reference: https://stackoverflow.com/questions/3160909/how-do-i-deal-with-certificates-using-curl-while-trying-to-access-an-https-url
