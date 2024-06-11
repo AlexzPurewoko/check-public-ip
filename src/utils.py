@@ -2,7 +2,11 @@ import ipaddress
 import os
 from git import Repo
 
-class IpUtilsManager:
+class Validator:
+    def validateIp(ip):
+        return ipaddress.ip_address(ip.strip()).__str__()
+
+class KeyEntryFileManager:
     def __init__(self, filePath):
         if not os.path.exists(filePath):
             raise FileNotFoundError()
@@ -21,14 +25,13 @@ class IpUtilsManager:
         self.__alreadyFirstOpen = True
         self.__entries = {}
         for line in file:
-            (label, ip) = line.split()
-            self.__entries[label.strip()] = ip.strip()
+            (label, valueEntry) = line.split()
+            self.__entries[label.strip()] = valueEntry.strip()
         file.close()
         
 
     def setEntry(self, key, value):
-        strippedIp = ipaddress.ip_address(value.strip()).__str__()
-        self.__entries[key.strip()] = strippedIp
+        self.__entries[key.strip()] = value.strip()
 
     def save(self):
         if not self.__alreadyFirstOpen:
