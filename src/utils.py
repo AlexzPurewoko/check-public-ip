@@ -1,6 +1,7 @@
 import ipaddress
 import os
 from git import Repo
+from git.exc import InvalidGitRepositoryError
 
 class Validator:
     def validateIp(ip):
@@ -54,15 +55,15 @@ class GitManager:
         if not os.path.exists(self.__localPath):
             self.__openedRepo = self.__clone()
             return
-        
-        countDir = len(os.listdir(self.__localPath))
-        if countDir == 0:
+
+        if len(os.listdir(self.__localPath)) == 0:
             self.__openedRepo = self.__clone()
             return
-        if countDir > 0 and os.path.exists("{}/.git".format(self.__localPath)):
-            raise Exception('The DIR is not empty and not a repository!')
         
-        self.__openedRepo = self.__openExisting()
+        try:
+            self.__openedRepo = self.__openExisting()
+        except InvalidGitRepositoryError:
+            raise Exception('The DIR is not empty and not a repository!')             
 
     def addFile(self, relativeFilePath):
         if self.__openedRepo is None:
@@ -103,6 +104,5 @@ class GitManager:
         )
     def __openExisting(self):
         return Repo(
-            self.__repoUrl,
             self.__localPath
         )
