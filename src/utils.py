@@ -1,5 +1,6 @@
 import ipaddress
 import os
+from git import Repo
 
 class IpUtilsManager:
     def __init__(self, filePath):
@@ -40,3 +41,65 @@ class IpUtilsManager:
         file.close()
 
 
+class GitManager:
+    def __init__(self, repoUrl, localPath):
+        self.__repoUrl = repoUrl
+        self.__localPath = localPath
+        self.__openedRepo = None
+
+    def open(self):
+        if not os.path.exists(self.__localPath):
+            self.__openedRepo = self.__clone()
+            return
+        
+        countDir = len(os.listdir(self.__localPath))
+        if countDir == 0:
+            self.__openedRepo = self.__clone()
+            return
+        if countDir > 0 and os.path.exists("{}/.git".format(self.__localPath)):
+            raise Exception('The DIR is not empty and not a repository!')
+        
+        self.__openedRepo = self.__openExisting()
+
+    def addFile(self, relativeFilePath):
+        if self.__openedRepo is None:
+            raise Exception('Repo is not opened yet')
+        self.__openedRepo.index.add(relativeFilePath)
+
+    def commit(self, message=None):
+        if self.__openedRepo is None:
+            raise Exception('Repo is not opened yet')
+        
+        diffs = self.__openedRepo.index.diff('HEAD')
+        if len(diffs) == 0:
+            print('No updates required')
+            return
+        
+        commitMsg = message
+        if commitMsg is None:
+            commitMsg = 'Updating data :\n\n'
+            for diff in diffs:
+                if diff.a_path != diff.b_path:
+                    commitMsg += '- {} to {}\n'.format(diff.a_path, diff.b_path)
+                else:
+                    commitMsg += '- {}'.format(diff.a_path)
+        
+        self.__openedRepo.index.commit(commitMsg)
+
+    def publish(self):
+        if self.__openedRepo is None:
+            raise Exception('Repo is not opened yet')
+        
+        self.__openedRepo.remote().push()
+
+    # PRIVATE
+    def __clone(self):
+        return Repo.clone_from(
+            self.__repoUrl,
+            self.__localPath
+        )
+    def __openExisting(self):
+        return Repo(
+            self.__repoUrl,
+            self.__localPath
+        )
