@@ -24,3 +24,4 @@ echo "#!/bin/bash" | sudo tee -a $PROG_UPDATE_IP
 echo "python3 $LIB_DIR/src/update-ip.py \$@" | sudo tee -a $PROG_UPDATE_IP
 
 sudo chmod 0755 $PROG_UPDATE_IP
+sudo chmod 0755 $PROG
