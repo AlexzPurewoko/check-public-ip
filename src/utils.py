@@ -1,3 +1,4 @@
+from io import BytesIO
 import ipaddress
 import os
 from git import Repo
@@ -102,7 +103,7 @@ class GitManager:
         
         commitMsg = message
         if commitMsg is None:
-            commitMsg = 'Updating data :\n\n'
+            commitMsg = 'Updating some data.\n\n'
             for diff in diffs:
                 if diff.a_path != diff.b_path:
                     commitMsg += '- {} to {}\n'.format(diff.a_path, diff.b_path)
