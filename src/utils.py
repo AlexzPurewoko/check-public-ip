@@ -44,6 +44,9 @@ class KeyEntryFileManager:
     def setEntry(self, key, value):
         self.__entries[key.strip()] = value.strip()
 
+    def getEntry(self, key):
+        return self.__entries[key]
+
     def save(self):
         if not self.__alreadyFirstOpen:
             raise Exception('You did not open the file yet first time')
