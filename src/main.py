@@ -1,34 +1,6 @@
-import pycurl
-from io import BytesIO
 import argparse
 import netifaces
-from utils import Validator
-
-# only get text value
-def geturlfromiface(url, iface=None, timeout=10):
-    curl = pycurl.Curl()
-    dataBuffer = BytesIO()
-
-    # set the options
-    curl.setopt(pycurl.URL, url)
-    curl.setopt(pycurl.TIMEOUT, timeout)
-    curl.setopt(pycurl.WRITEFUNCTION, dataBuffer.write)
-
-    if iface is not None:
-        curl.setopt(pycurl.INTERFACE, iface)
-
-    # perform the operation
-    curl.perform()
-
-    response = dataBuffer.getvalue().decode('UTF-8')
-    dataBuffer.close()
-    curl.close()
-
-    return response
-
-
-def checkpublicip(iface=None, timeout=10):
-    return geturlfromiface("https://checkip.amazonaws.com", iface, timeout)
+from utils import Validator, checkpublicip
 
 def showlistinterfaces():
     print("List your available Network interfaces: ")
