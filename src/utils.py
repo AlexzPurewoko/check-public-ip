@@ -27,8 +27,15 @@ class KeyEntryFileManager:
         self.__alreadyFirstOpen = True
         self.__entries = {}
         for line in file:
-            (label, valueEntry) = line.split()
-            self.__entries[label.strip()] = valueEntry.strip()
+            line = line.strip().split()
+            if len(line) == 0:
+                continue
+            
+            label = line[0]
+            try:
+                self.__entries[label.strip()] = line[1]
+            except:
+                self.__entries[label.strip()] = None
         file.close()
         
     def keyExists(self, *keys):
