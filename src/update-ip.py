@@ -1,5 +1,5 @@
 import os
-from utils import KeyEntryFileManager, GitManager, checkpublicip
+from utils import KeyEntryFileManager, GitManager, checkpublicip, Validator
 import argparse
 import netifaces
 
@@ -39,7 +39,7 @@ def doUpdate(config):
     entryIP = KeyEntryFileManager(REPO + '/ip_address.txt')
 
     for iface in netifaces.interfaces():
-        if iface == 'lo':
+        if Validator.ifaceExcluded(iface):
             continue
         entryIP.setEntry(iface, checkpublicip(iface))
 

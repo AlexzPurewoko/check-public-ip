@@ -2,6 +2,7 @@ import pycurl
 from io import BytesIO
 import argparse
 import netifaces
+from utils import Validator
 
 # only get text value
 def geturlfromiface(url, iface=None, timeout=10):
@@ -33,6 +34,8 @@ def showlistinterfaces():
     print("List your available Network interfaces: ")
     
     for iface in netifaces.interfaces():
+        if Validator.ifaceExcluded(iface):
+            continue
         print(iface)
 
 
