@@ -30,6 +30,16 @@ class KeyEntryFileManager:
             self.__entries[label.strip()] = valueEntry.strip()
         file.close()
         
+    def keyExists(self, *keys):
+        for key in keys:
+            for dictKey in self.__entries.keys():
+                if dictKey == key.strip():
+                    return True
+        return False
+    
+    def remove(self, key):
+        if (self.keyExists(key)):
+            del self.__entries[key.strip()]
 
     def setEntry(self, key, value):
         self.__entries[key.strip()] = value.strip()
