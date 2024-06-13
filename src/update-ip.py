@@ -41,7 +41,11 @@ def doUpdate(config):
     for iface in netifaces.interfaces():
         if Validator.ifaceExcluded(iface):
             continue
-        entryIP.setEntry(iface, checkpublicip(iface))
+
+        try:
+            entryIP.setEntry(iface, checkpublicip(iface))
+        except:
+            print(f"Failed to get IP on interface : {iface}")
 
     entryIP.save()
     gitmanager.addFile('ip_address.txt')
