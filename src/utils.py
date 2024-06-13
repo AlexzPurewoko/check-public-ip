@@ -4,10 +4,25 @@ import os
 from git import Repo
 from git.exc import InvalidGitRepositoryError
 import pycurl
+import re
+
+EXCLUDED_IFACES = [
+    'lo',
+    'veth.*',
+    'br-.*',
+    'docker.*',
+    'virbr.*',
+]
 
 class Validator:
     def validateIp(ip):
         return ipaddress.ip_address(ip.strip()).__str__()
+
+    def ifaceExcluded(ifacename) -> bool:
+        for excluded in EXCLUDED_IFACES:
+            if re.match(excluded, ifacename):
+                return True
+        return False
 
 class KeyEntryFileManager:
     def __init__(self, filePath):
