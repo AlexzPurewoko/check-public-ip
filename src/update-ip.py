@@ -39,6 +39,8 @@ def doUpdate(config):
     entryIP = KeyEntryFileManager(REPO + '/ip_address.txt')
 
     for iface in netifaces.interfaces():
+        if iface == 'lo':
+            continue
         entryIP.setEntry(iface, checkpublicip(iface))
 
     entryIP.save()
