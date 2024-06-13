@@ -100,7 +100,9 @@ class GitManager:
         try:
             self.__openedRepo = self.__openExisting()
         except InvalidGitRepositoryError:
-            raise Exception('The DIR is not empty and not a repository!')             
+            raise Exception('The DIR is not empty and not a repository!')
+
+        self.__openedRepo.remote().pull()         
 
     def addFile(self, relativeFilePath):
         if self.__openedRepo is None:
