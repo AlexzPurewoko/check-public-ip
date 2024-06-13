@@ -2,6 +2,7 @@ import ipaddress
 import os
 from git import Repo
 from git.exc import InvalidGitRepositoryError
+import pycurl
 
 class Validator:
     def validateIp(ip):
@@ -119,3 +120,29 @@ class GitManager:
         return Repo(
             self.__localPath
         )
+
+# only get text value
+def geturlfromiface(url, iface=None, timeout=10):
+    curl = pycurl.Curl()
+    dataBuffer = BytesIO()
+
+    # set the options
+    curl.setopt(pycurl.URL, url)
+    curl.setopt(pycurl.TIMEOUT, timeout)
+    curl.setopt(pycurl.WRITEFUNCTION, dataBuffer.write)
+
+    if iface is not None:
+        curl.setopt(pycurl.INTERFACE, iface)
+
+    # perform the operation
+    curl.perform()
+
+    response = dataBuffer.getvalue().decode('UTF-8')
+    dataBuffer.close()
+    curl.close()
+
+    return response
+
+
+def checkpublicip(iface=None, timeout=10):
+    return geturlfromiface("https://checkip.amazonaws.com", iface, timeout)
