@@ -3,6 +3,7 @@ import ipaddress
 import os
 from git import Repo
 from git.exc import InvalidGitRepositoryError
+from datetime import datetime
 import pycurl
 import re
 
@@ -171,3 +172,6 @@ def geturlfromiface(url, iface=None, timeout=10):
 
 def checkpublicip(iface=None, timeout=10):
     return geturlfromiface("https://checkip.amazonaws.com", iface, timeout)
+
+def log(str):
+    print(f"[{datetime.now()}] {str}")
