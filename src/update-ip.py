@@ -1,5 +1,5 @@
 import os
-from utils import KeyEntryFileManager, GitManager, checkpublicip, Validator
+from utils import KeyEntryFileManager, GitManager, checkpublicip, Validator, log
 import argparse
 import netifaces
 
@@ -26,9 +26,10 @@ def reconfigure(entry):
     repository = input('Input your repository : ')
     entry.setEntry('repository', repository)
     entry.save()
-    print('Configuration saved!')
+    log('Configuration saved!')
 
 def doUpdate(config):
+    log('Start Collecting Public IP for updates')
     repo = config.getEntry('repository')
     gitmanager = GitManager(
         repo,
@@ -44,14 +45,15 @@ def doUpdate(config):
 
         try:
             entryIP.setEntry(iface, checkpublicip(iface))
+            log(f"Successfully collect IP from : {iface}")
         except:
-            print(f"Failed to get IP on interface : {iface}")
+            log(f"Failed to get IP on interface : {iface}")
 
     entryIP.save()
     gitmanager.addFile('ip_address.txt')
     gitmanager.commit()
     gitmanager.publish()
-    pass
+    log('Program runned successfully. Exited now...')
 
 
 setupConfig()
@@ -66,6 +68,6 @@ if args.config:
     reconfigure(config)
 else:
     if not config.keyExists('repository'):
-        print('Configuration is gone or not existed yet. Please do configure first')
+        log('Configuration is gone or not existed yet. Please do configure first')
     else:
         doUpdate(config)

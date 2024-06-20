@@ -116,7 +116,7 @@ class GitManager:
         
         diffs = self.__openedRepo.index.diff('HEAD')
         if len(diffs) == 0:
-            print('No updates required')
+            log('No updates required')
             return
         
         commitMsg = message
@@ -129,6 +129,7 @@ class GitManager:
                     commitMsg += '- {}'.format(diff.a_path)
         
         self.__openedRepo.index.commit(commitMsg)
+        log("Any updates of public IP have been commited!")
 
     def publish(self):
         if self.__openedRepo is None:
