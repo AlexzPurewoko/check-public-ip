@@ -79,4 +79,4 @@ else:
     if not config.keyExists('repository'):
         log('Configuration is gone or not existed yet. Please do configure first')
     else:
-        doUpdate(config)
+        doUpdate(config, configEnv)
