@@ -5,8 +5,6 @@ from sheetsutils import SheetsFileManager
 import argparse
 import netifaces
 
-
-
 CONFIG_DIR = os.path.expanduser('~/.config/update-ip')
 MAIN_CONFIG = CONFIG_DIR + '/config.txt'
 ENV_CONFIG = CONFIG_DIR + '/.env'
