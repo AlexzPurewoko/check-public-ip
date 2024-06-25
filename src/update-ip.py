@@ -1,11 +1,13 @@
 import os
 from utils import KeyEntryFileManager, GitManager, checkpublicip, Validator, log
+from dotenv import dotenv_values
+from sheetsutils import SheetsFileManager
 import argparse
 import netifaces
 
-
 CONFIG_DIR = os.path.expanduser('~/.config/update-ip')
 MAIN_CONFIG = CONFIG_DIR + '/config.txt'
+ENV_CONFIG = CONFIG_DIR + '/.env'
 IFACE_CONFIG = CONFIG_DIR + '/ifaces.txt'
 REPO = CONFIG_DIR + '/repo'
 
@@ -28,7 +30,7 @@ def reconfigure(entry):
     entry.save()
     log('Configuration saved!')
 
-def doUpdate(config):
+def doUpdate(config, configEnv={}):
     log('Start Collecting Public IP for updates')
     repo = config.getEntry('repository')
     gitmanager = GitManager(
@@ -38,13 +40,16 @@ def doUpdate(config):
     gitmanager.open()
 
     entryIP = KeyEntryFileManager(REPO + '/ip_address.txt')
+    sheetsFileManager = SheetsFileManager(configEnv)
 
     for iface in netifaces.interfaces():
         if Validator.ifaceExcluded(iface):
             continue
 
         try:
-            entryIP.setEntry(iface, checkpublicip(iface))
+            publicIp = checkpublicip(iface)
+            entryIP.setEntry(iface, publicIp)
+            sheetsFileManager.setEntry(iface, publicIp)
             log(f"Successfully collect IP from : {iface}")
         except:
             log(f"Failed to get IP on interface : {iface}")
@@ -53,11 +58,13 @@ def doUpdate(config):
     gitmanager.addFile('ip_address.txt')
     gitmanager.commit()
     gitmanager.publish()
+    sheetsFileManager.save()
     log('Program runned successfully. Exited now...')
 
 
 setupConfig()
 config = loadConfig()
+configEnv = dotenv_values(ENV_CONFIG)
 
 parser = argparse.ArgumentParser(prog='update-ip')
 parser.add_argument("-c", "--config", help="Configure the automatic update IP", action="store_true")
@@ -70,4 +77,4 @@ else:
     if not config.keyExists('repository'):
         log('Configuration is gone or not existed yet. Please do configure first')
     else:
-        doUpdate(config)
+        doUpdate(config, configEnv)
