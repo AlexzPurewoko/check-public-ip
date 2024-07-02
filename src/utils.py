@@ -176,3 +176,9 @@ def checkpublicip(iface=None, timeout=10):
 
 def log(str):
     print(f"[{datetime.now()}] {str}")
+
+def safeGet(list, index, default=None):
+    try :
+        return list[index]
+    except IndexError:
+        return default
