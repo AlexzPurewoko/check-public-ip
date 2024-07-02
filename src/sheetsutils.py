@@ -1,7 +1,8 @@
 import google.auth
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from utils import log
+from utils import log, safeGet
+from datetime import datetime
 
 class SheetsFileManager:
     def __init__(self, conf={}) -> None:
@@ -18,7 +19,7 @@ class SheetsFileManager:
         })
 
         self.__entries = {}
-        self.__rangeKeyValues = 'RAW!A2:B'
+        self.__rangeKeyValues = 'RAW!A2:C'
         self.__sheetsId = conf['SHEETS_FILE_ID']
         self.__sheetServices = build('sheets', 'v4', credentials=creds).spreadsheets()
         self.__readEntries()
@@ -40,7 +41,7 @@ class SheetsFileManager:
         ).execute().get('values', [])
 
         for entry in entries:
-            self.__entries[entry[0]] = entry[1]
+            self.__entries[entry[0]] = [safeGet(entry, 1), safeGet(entry, 2)]
 
     # def keyExists(self, *keys):
     #     for 
@@ -55,16 +56,17 @@ class SheetsFileManager:
             return
 
         strippedValue = value.strip()
-        if self.keyExists(key) and strippedValue == self.__entries[key]:
+        if self.keyExists(key) and strippedValue == self.__entries[key][0]:
             return
-        self.__entries[key] = strippedValue
+
+        self.__entries[key] = [strippedValue, f"{datetime.now()}"]
         self.__haveUpdates = True
 
     def getEntry(self, key):
         if not self.__hasProperConfig:
             return None
 
-        return self.__entries[key]
+        return self.__entries[key][0]
     
     def keyExists(self, *keys):
         for key in keys:
@@ -89,7 +91,7 @@ class SheetsFileManager:
         
         computedValues = list()
         for key, value in self.__entries.items():
-            computedValues.append([key, value])
+            computedValues.append([key, value[0], value[1]])
 
         computedBody = {
             "values" :computedValues
