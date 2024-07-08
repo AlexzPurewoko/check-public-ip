@@ -56,8 +56,8 @@ class SheetsFileManager:
             return
 
         strippedValue = value.strip()
-        if self.keyExists(key) and strippedValue == self.__entries[key][0]:
-            return
+        # if self.keyExists(key) and strippedValue == self.__entries[key][0]:
+        #     return
 
         self.__entries[key] = [strippedValue, f"{datetime.now()}"]
         self.__haveUpdates = True
